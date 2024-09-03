@@ -38,7 +38,9 @@ function parseData(data) {
     .split("\n")
     .map((line) => {
       const tokens = [];
-      const matches = line.match(/\[(.*?)\]/g) || [];
+      const [mainPart, expandDown] = line.split("#");
+
+      const matches = mainPart.match(/\[(.*?)\]/g) || [];
 
       matches.forEach((match) => {
         const [colorToken, repeatToken] = match.slice(1, -1).split(":");
@@ -54,6 +56,14 @@ function parseData(data) {
           tokens.push(colorData);
         }
       });
+
+      if (expandDown) {
+        const expandCount = parseInt(expandDown, 10);
+        const originalTokens = [...tokens];
+        for (let i = 1; i < expandCount; i++) {
+          tokens.push(...originalTokens);
+        }
+      }
 
       return tokens;
     });
@@ -174,7 +184,7 @@ async function processFile(filePath) {
     const data = fs.readFileSync(filePath, "utf-8");
     const parsedData = parseData(data);
     const relativePath = path.relative(srcDir, filePath);
-    const outputPath = path.join(distDir, relativePath.replace(".tt", ".png"));
+    const outputPath = path.join(distDir, relativePath.replace(".bt", ".png"));
 
     ensureDirExists(path.dirname(outputPath));
 
@@ -194,7 +204,7 @@ async function processDirectory(dir) {
 
     if (fs.statSync(filePath).isDirectory()) {
       await processDirectory(filePath);
-    } else if (filePath.endsWith(".tt")) {
+    } else if (filePath.endsWith(".bt")) {
       await processFile(filePath);
     }
   }
