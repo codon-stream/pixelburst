@@ -1,0 +1,13 @@
+{
+  "name": "pixelburst",
+  "version": "1.0.0",
+  "main": "index.js",
+  "keywords": [
+    "png",
+    "pixel"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "sharp": "^0.33.5"
+  }
+}
